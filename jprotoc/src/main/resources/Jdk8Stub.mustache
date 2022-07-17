@@ -1,0 +1,76 @@
+{{#packageName}}
+package {{packageName}};
+{{/packageName}}
+
+import com.salesforce.grpc.contrib.MoreFutures;
+
+import com.google.common.util.concurrent.ListenableFuture;
+import io.grpc.CallOptions;
+import io.grpc.Channel;
+import io.grpc.stub.AbstractStub;
+
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+
+{{#deprecated}}@Deprecated{{/deprecated}}
+@javax.annotation.Generated(
+    value = "by gRPC JDK 8 generator",
+    comments = "Source: {{protoName}}")
+public class {{className}} {
+    private {{className}}() {}
+
+    /**
+    * Creates a new CompletableFuture-style stub that supports unary calls on the service
+    */
+    @SuppressWarnings("unchecked")
+    public static {{serviceName}}CompletableFutureStub newCompletableFutureStub(Channel channel) {
+        return newCompletableFutureStub(channel, MoreFutures::toCompletableFuture);
+    }
+
+    /**
+    * Creates a new CompletableFuture-style stub that supports unary calls on the service
+    */
+    @SuppressWarnings("unchecked")
+    public static {{serviceName}}CompletableFutureStub newCompletableFutureStub(Channel channel, Function<ListenableFuture, CompletableFuture> futureAdapter) {
+        return new {{serviceName}}CompletableFutureStub(channel, futureAdapter);
+    }
+
+    {{#javaDoc}}{{{javaDoc}}}{{/javaDoc}}
+    public static final class {{serviceName}}CompletableFutureStub extends AbstractStub<{{serviceName}}CompletableFutureStub> {
+        private {{serviceName}}Grpc.{{serviceName}}FutureStub innerStub;
+        private Function<ListenableFuture, CompletableFuture> futureAdapter;
+
+        private {{serviceName}}CompletableFutureStub(Channel channel, Function<ListenableFuture, CompletableFuture> futureAdapter) {
+            super(channel);
+            this.futureAdapter = futureAdapter;
+            innerStub = {{serviceName}}Grpc.newFutureStub(channel);
+        }
+
+        private {{serviceName}}CompletableFutureStub(Channel channel, CallOptions callOptions, Function<ListenableFuture, CompletableFuture> futureAdapter) {
+            super(channel, callOptions);
+            this.futureAdapter = futureAdapter;
+            innerStub = {{serviceName}}Grpc.newFutureStub(channel).build(channel, callOptions);
+        }
+
+        @Override
+        protected {{serviceName}}CompletableFutureStub build(Channel channel, CallOptions callOptions) {
+            {{serviceName}}CompletableFutureStub stub = new {{serviceName}}CompletableFutureStub(channel, callOptions, futureAdapter);
+            return stub;
+        }
+        {{#methods}}
+
+            {{#javaDoc}}
+        {{{javaDoc}}}
+            {{/javaDoc}}
+            {{#deprecated}}
+        @java.lang.Deprecated
+            {{/deprecated}}
+        @SuppressWarnings("unchecked")
+        public CompletableFuture<{{outputType}}> {{methodName}}({{inputType}} request) {
+            return futureAdapter.apply(innerStub.{{methodName}}(request));
+        }
+        {{/methods}}
+    }
+}
