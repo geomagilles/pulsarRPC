@@ -1,5 +1,6 @@
 package io.infinitic.pulsarRPC
 
+import com.google.protobuf.GeneratedMessageV3
 import io.grpc.CallOptions
 import io.grpc.Channel
 import io.grpc.ClientCall
@@ -16,40 +17,42 @@ fun main(args: Array<String>) {
 
     val channel = PulsarChannel()
 
-//    val stub: GreeterGrpc.GreeterBlockingStub = GreeterGrpc.newBlockingStub(channel)
+    val stub: GreeterGrpc.GreeterBlockingStub = GreeterGrpc.newBlockingStub(channel)
 
-//    val r: HelloReply = stub.sayHello(request)
+    val r: HelloReply = stub.sayHello(request)
 
-    val requestObserver = GreeterGrpc.newStub(channel).sayHelloStreaming(HelloReplyObserver())
-
-    try {
-        // Send numPoints points randomly selected from the features list.
-        for (i in 0 until 10) {
-            val reply = HelloRequest.newBuilder().setName("$i!").build()
-
-            requestObserver.onNext(reply)
-
-            Thread.sleep(100)
-        }
-    } catch (e: RuntimeException) {
-        // Cancel RPC
-        requestObserver.onError(e)
-        throw e
-    }
-    requestObserver.onCompleted()
+//    val requestObserver = GreeterGrpc.newStub(channel).sayHelloStreaming(HelloReplyObserver())
+//
+//    try {
+//        // Send numPoints points randomly selected from the features list.
+//        for (i in 0 until 10) {
+//            val reply = HelloRequest.newBuilder().setName("$i!").build()
+//
+//            requestObserver.onNext(reply)
+//
+//            Thread.sleep(100)
+//        }
+//    } catch (e: RuntimeException) {
+//        // Cancel RPC
+//        requestObserver.onError(e)
+//        throw e
+//    }
+//    requestObserver.onCompleted()
 
 //    GreeterGrpc.newStub(channel).sayHello(request, HelloReplyObserver())
 
 //    println(GreeterGrpc.newFutureStub(channel).sayHello(request).get())
 }
 
-class PulsarChannel : Channel() {
-
+class PulsarChannel(
+    // pulsar client
+) : Channel() {
     override fun <RequestT : Any, ResponseT : Any> newCall(
         methodDescriptor: MethodDescriptor<RequestT, ResponseT>,
         callOptions: CallOptions?
     ): ClientCall<RequestT, ResponseT> {
         System.err.println("PulsarChannel.newCall(methodDescriptor=$methodDescriptor, callOptions=$callOptions)")
+        System.err.println("Calling ${methodDescriptor.serviceName}::${methodDescriptor.bareMethodName}")
 
         return PulsarClientCall()
     }
@@ -60,7 +63,10 @@ class PulsarChannel : Channel() {
     }
 }
 
-class PulsarClientCall<RequestT : Any, ResponseT : Any> : ClientCall<RequestT, ResponseT>() {
+class PulsarClientCall<RequestT : Any, ResponseT : Any>(
+    // topic producer
+    // topic consumer
+) : ClientCall<RequestT, ResponseT>() {
 
     override fun start(responseListener: Listener<ResponseT>, headers: Metadata?) {
         System.err.println("PulsarClientCall.start(responseListener=$responseListener, headers=$headers)")
@@ -94,7 +100,10 @@ class PulsarClientCall<RequestT : Any, ResponseT : Any> : ClientCall<RequestT, R
 
     override fun sendMessage(message: RequestT) {
         System.err.println("PulsarClientCall.sendMessage(message = $message)")
+        System.err.println("with parameter: ${message::class.java} - $message)")
         // TODO("Not yet implemented")
+        // send message RunTask(
+        println((message as GeneratedMessageV3).toByteArray())
     }
 }
 

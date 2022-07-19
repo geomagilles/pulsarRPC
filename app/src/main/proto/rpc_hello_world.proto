@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.pulsarRPC.examples.helloworld";
+
+package helloworld;
+
+import "hello_world.proto";
+
+// The request message containing the user's name.
+message RunSayHelloTask {
+  string name = 1;
+  HelloRequest param = 2;
+}

@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation("com.salesforce.servicelibs:jprotoc:1.2.1")
-    api(project(":jprotoc"))
+//    api(project(":jprotoc"))
 }
 
 tasks.getByName<Test>("test") {
